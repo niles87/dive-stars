@@ -2,6 +2,8 @@ drop DATABASE if EXISTS diving_db;
 
 create DATABASE diving_db;
 
+\c diving_db;
+
 create domain UNSIGNED as Integer check (value > 0);
 
 create Table certifications (
@@ -51,13 +53,13 @@ CREATE TABLE dives (
     location_id INTEGER NOT NULL REFERENCES locations(id) ON DELETE CASCADE
 );
 
+CREATE INDEX diver_index ON dives (diver_id);
+
+CREATE INDEX location_index ON dives (location_id);
+
 create Function random_between(low int, high int) returns 
 int as 
-$$ 
-BEGIN 
-	RETURN floor(random() * (high - low + 1) + low);
-	end;
-	$$ language 
-plpgsql 
+	$$ BEGIN RETURN floor(random() * (high - low + 1) + low);
+end; 
 
-;
+$$ language plpgsql ;

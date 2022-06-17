@@ -35,4 +35,14 @@ router.get("/:id/stats", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  try {
+    const { rows } = await Diver.create(req.body);
+    res.send(rows[0]);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: "failed to create diver" });
+  }
+});
+
 module.exports = router;

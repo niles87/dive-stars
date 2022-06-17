@@ -20,6 +20,15 @@ class Diver {
       [id]
     );
   }
+
+  create(diver) {
+    const { first_name, last_name, is_instructor, certification_id } = diver;
+
+    return db.query(
+      `insert into divers (first_name, last_name, is_instructor, certification_id) values ($1, $2, $3, $4) returning *`,
+      [first_name, last_name, is_instructor, certification_id]
+    );
+  }
 }
 
 module.exports = new Diver();

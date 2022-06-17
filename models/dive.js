@@ -17,6 +17,14 @@ class Dive {
     LIMIT 1
     `);
   }
+
+  create(dive) {
+    const { depth, duration, diver_id, location_id } = dive;
+    return db.query(
+      `insert into dives (depth, duration, diver_id, location_id) values ($1, $2, $3, $4) returning *`,
+      [depth, duration, diver_id, location_id]
+    );
+  }
 }
 
 module.exports = new Dive();

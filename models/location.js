@@ -55,6 +55,37 @@ class Location {
       [id]
     );
   }
+
+  create(location) {
+    return new Promise(async (resolve, reject) => {
+      const { name, lat, long, tags } = location;
+      const client = await db.getClient();
+
+      try {
+        await client.query("begin");
+        const result = await client.query(
+          `insert into locations (name, coordinates) values ($1, point($2, $3)) returning *`,
+          [name, lat, long]
+        );
+
+        if (tags && tags.length > 0) {
+          for (const tag of tags) {
+            await client.query(
+              `insert into tags (name, location_id) values ($1, $2)`,
+              [tag, result.rows[0].id]
+            );
+          }
+        }
+
+        await client.query("commit");
+        resolve(result);
+      } catch (err) {
+        await client.query(`rollback`);
+        reject(err);
+      }
+      client.release();
+    });
+  }
 }
 
 module.exports = new Location();
